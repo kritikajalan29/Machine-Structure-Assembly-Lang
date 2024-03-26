@@ -1,0 +1,103 @@
+/**********************************************************
+* HW2: iii
+* Comp 40
+* README
+* Names: Ishaan Arora and Kritika Jalan
+* UTLN: (iarora01) and (kjalan01)
+* Date: October 4th, 2022
+*********************************************************/
+
+Compile/run:
+     - Compile using
+            make 
+     - Run executable with
+            ./sudoku [filename]
+            ./unblackedges [filename]
+
+
+Acknowledgements:
+
+ONLINE SOURCES: 
+1) Linux man pages 
+2) Stack overflow
+3) Hanson supplement chapter on UArrays
+
+
+TAs: 
+Thank you to TA's !!
+
+Files:
+
+uarray2.h
+    Interface of urray2.c
+
+urray2.c
+    adaptation of Hanson's unboxed-array abstraction to support
+    two-dimensional arrays. It defines the type UArray2_T and the implements
+    the necessary functions for two-dimensional arrays to work.
+
+bit2.h
+    Interface of bit2.c
+
+bit2.c
+    bit2.c  is an interface to support two-dimensional arrays of bits. This 
+    interface can be helpful when dealing with a 'packed' representation of 
+    pixels such as in high resolution images. bit2.c defines a type Bit2_T
+    and creates the functions required to manipulate a two-dimensional bitmap.
+
+sudoku.c
+    sudoku.c is a test program that functions as a predicate. It makes use of 
+    the uarray2 interface to store a sudoku puzzle in the form of a pgm. Using
+    the functions provided by the uarray2 interface, we check whether the 
+    provided pgm is indeed a correctly solved sudoku puzzle. The program 
+    returns 0 if the above is true, else it exits with a code of 1.
+
+duplicate_check.h
+    Interface of duplicate_check.c
+
+duplicate_check.c
+    duplicate_check.c is the implementation for a helper module used by sudoku. 
+    It defines all the functions to check for the correct formatting
+    and existence of duplicates in a given solved sudoku puzzle pgm file. It
+    checks for the existence of duplicate values within a row, column,
+    or a 3x3 sub-box within an instance of a UArray2_T that stores the
+    raster of a pgm file.
+    
+unblackedges.c
+    unblackedges.c uses the bit2 interface to remove black edges from a 
+    scanned image. The image is stored in a 2D bitmap and with the help of DFS
+    helper module, it scans through all black edge pixels and their 
+    neighbouring black pixels and turns them white.
+
+DFS.h
+    Interface of DFS.c
+
+DFS.c
+    DFS.c is the implementation for the DFS search helper module used in 
+    unblackedges.c. It defines all the functions required to run a 
+    unblacken all the black edge pixels and their neighbors by conducting a 
+    depth first search.
+
+print.h
+    Interface of print.c
+
+print.c
+    print.c is a helper module used by unblackedges. It defines all the 
+    unctions to print the pbm file created following processing done 
+    by unblackedges.
+
+Makefile
+    Contains the appropriate instructions to compile the executables
+
+Data Structures:
+    - Implemented our own 2D UArray - used a Hanson UArray
+    - Implemented our own 2D Bit_Vector - used a Hanson Bit_Vector
+    - Used the pnmrdr reader data structure
+    - Used a Hanson sequence as a stack in unblackedges.c
+
+
+Time: 
+
+We spent approximately 60 hours on this homework.
+
+

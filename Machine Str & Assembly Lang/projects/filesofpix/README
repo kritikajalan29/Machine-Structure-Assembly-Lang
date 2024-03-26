@@ -1,0 +1,86 @@
+/**********************************************************
+* HW1: Filesofpix
+* Comp 40
+* README
+* Names: Ishaan Arora and Kritika Jalan
+* UTLN: (iarora01) and (kjalan01)
+* Date: September 21st, 2022
+*
+*********************************************************/
+
+Compile/run:
+     - Compile using
+            make 
+     - Run executable with
+            ./restoration [filename]
+
+
+Program Purpose:
+
+Filesofpix uncorrupts 'plain' pgm corrupted image files and restores the image
+to output it in the 'raw' pgm format. 
+
+Acknowledgements:
+
+ONLINE SOURCES: 
+1) Linux man pages 
+2) Stack overflow
+
+
+TAs: 
+Thank you to TA's Alec, Tina, Neil !!
+
+Files:
+
+readline.c
+    A source file that reads a single line of input from an already oopened
+    file, file inputfd. The characters comprising the line are placed into a 
+    contiguous array of bytes, and readaline returns the number of bytes in 
+    the line. 
+
+restoration.h
+    Interface of restoration.c
+
+restoration.c
+    A source file that restore a corrupted 'plain' pgm file to a functional 
+    'raw' pgm file.
+
+Makefile
+    Contains the appropriate instructions to compile the executable
+    restoration
+
+Data Structures:
+    - Hanson Atom : to store non-digit bytes
+    - Hanson Sequences : to store char arrays (C Strings) parsed from lines of 
+                         provided corrupted image files
+    - Hanson Table : to store key-value pairs where keys are atoms and values 
+                     are sequences 
+
+
+Implementation that works: 
+     - readaline can read more than a 1000 bytes in a line using realloc
+     - it can write to datapp by allocating memory using malloc and accessing
+       datapp by reference.
+     - memory allocated for *datapp is freed and *datapp is set to NULL at EOF
+
+     - restoration successfully opens file supplied as well as reads in from
+       stdin when required
+     - restoration calls readaline successfully to populate a local array with
+       a single line of characters
+     - restoration successfully separates digit and non-digit characters 
+     - it populates an atom and a sequence with non-digit and digit arrays 
+       respectively 
+     - it populates a table using atoms as keys and sequences as values
+     - it successfully identifies the atom corresponding with the original
+       image raster
+     - it then goes on to add the uncorrupted rasters to a sequence
+     - it successfully converts the given corrupted plain pgm file into a 
+       readable raw pgm file
+
+
+
+Time: 
+
+We spent approximately 50 hours on this homework.
+
+
