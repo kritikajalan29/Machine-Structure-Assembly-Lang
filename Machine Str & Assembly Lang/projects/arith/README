@@ -1,0 +1,110 @@
+/**********************************************************
+* Homework 4: ARITH
+* Author: Kritika Jalan (kjalan01) and Ishaan Arora (iarora01)
+* CS 40
+* README
+* Date: 10/28/2022
+*********************************************************/
+
+
+Acknowledgements
+        * We were helped by course staff which included, TAs ,
+          Alec, Matt, MJ, Bridget and Tina. Thank you!
+        * Once we had our design ready, we went over it with the TAs to make 
+          sure we are on the right track.
+        * We used Hanson's UArray_T interface in our implementation to store 
+          pixels
+        * We used the implementation of UArray2_T given on the course website
+        * We used the linux man pages to understand the ppm syntax 
+
+
+
+/********************************************************************\
+*                          Implementation                            *
+\********************************************************************/
+
+To the best of our knowledge, our program accurately compresses a ppm image and 
+decompresses a compressed file. Our implementation works with both stdin
+and file input.
+
+/********************************************************************\
+*                          Architecture                              *
+\********************************************************************/
+
+40image.c
+- Handles file opening and closing
+- Takes in arguments passed in from the user and calls the respective
+  function (compress_or_decompress)
+
+compress40.c
+- Main driver code
+- Contains compress and decompress functions
+- Calls the appropriate functions from appropraite modules to either compress
+  a PPM image or decompress a compressed image file based on what the user
+  passes is
+- Declares required data structures (UArray2)
+
+
+structs.h
+- interface for structs.c - defines all the structs and functions to be used
+  by the entire program
+
+structs.c
+- Source file for definitions of key structs used in compression
+and decompression algorithms. Contains a bound checking function
+that is implemented by several modules.
+
+
+file_io.h
+- Interface for file_io.c - defines all the file reading and writing functions
+  used in the program
+file_io.c
+- Defines all the functions needed for input/output and file handling for 
+  compression and decompression of images.
+
+
+rgb_cv_convert.h
+- Interface for rgb_cv_convert.c - declares the functions to convert a pixel
+  from rgb representation to Component Video representation
+rgb_cv_convert.c
+- Defines the functions to convert a pixel from rgb representation to 
+  Component Video representation
+
+
+quantization.h
+- Interface for quantization.c - Declares the functions to transform pixels 
+  from pixel space into Discrete Cosine Transform space and to quantize pixels
+  quantization.c
+- Defines the functions to transform pixels from
+  pixel space into Discrete Cosine Transform space and to quantize pixels
+
+
+codeword.h
+- interface for codeword.c - Defines the functions to bitpack and unpack
+  32 bit codewords used in the program
+codeword.c
+- Declares the functions to bitpack and unpack 32 bit codewords 
+  used in the program
+
+bitpack.c
+- Implementation of the bitpack interface
+
+STRUCTS:
+
+CompVideo
+- Component Video representation of the pixels of the image (Y/Pb/Pr)
+
+Quant
+- Reprsents the 2x2 blocks of pixels
+
+Closure
+- Represents the closure arguments to be passed into map functions
+
+
+/********************************************************************\
+*                        Part D: Time Spent                           *
+\********************************************************************/
+
+Analysis - approximately 30 hours
+Coding - approximately 90 hours
+
