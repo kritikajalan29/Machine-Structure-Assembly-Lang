@@ -1,0 +1,7 @@
+r0 - zero register
+r1 - return address / return value
+r2 - call stack
+r3 - value stack
+r4 - jump table
+r5, r6 & r7 - temps
+

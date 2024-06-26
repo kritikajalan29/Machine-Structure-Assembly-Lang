@@ -1,0 +1,108 @@
+# printd.ums
+# contains functions for the rpn calculator
+# set temps and zero register
+    .zero r0
+    .temps r6, r7
+    .section text
+
+# print
+# purpose:  prints the contents of the vlaue stack iteratively
+# argument: (r3) value stack
+# returns:  nothing
+# registers:
+#   
+print:
+    push r1 on stack r2
+    push r3 on stack r2
+print_loop:
+    if (r3 == endvstack) goto print_end using r5
+    r5 := m[r0][r3]
+
+    push r5 on stack r2
+    goto print_word linking r1
+    pop stack r2
+
+    r3 := r3 + 1
+    goto print_loop
+print_end:
+    pop r3 off stack r2
+    pop r1 off stack r2
+    goto r1
+
+# print_word
+# purpose:  prints a word to stdout iteratively
+# argument: the word to be printed
+# returns:  nothing
+# registers:
+#   r1: stores number to be printed
+#   r2: call stack
+#   r3: number of units/tens/thousands
+#   r4: number to divide by to calculate each number place
+print_word:
+    pop r5 off stack r2
+    push r1 on stack r2
+    r1 := r5
+    push r4 on stack r2
+    push r3 on stack r2
+    push r5 on stack r2
+
+    output ">>> "
+    # handle 0 case
+    if (r1 == 0) goto print_zero using r5
+    if (r1 == 4294967295) goto print_minus_one using r5
+
+    r4 := r1 / 2147483648
+    if (r4 == 1) goto print_neg using r5
+
+# print loop 1
+# this is when we have not seen a 0 yet, so we are
+# printing every digit we see not including 0s.
+# program switches to print loop 2 when the first non '0' is encountered.
+print_word_init:
+    r4 := 1000000000
+print_word_loop:
+    if (r4 == 0) goto print_word_end
+    r3 := r1 / r4
+    r1 := r1 mod r4
+    if (r3 != 0) goto print_single
+    r4 := r4 / 10
+    goto print_word_loop
+
+# print loop 2
+# print every place, even if that place contains 0.
+print_word_zero_seen_loop:
+    if (r4 == 0) goto print_word_end
+    r3 := r1 / r4
+    r1 := r1 mod r4
+    goto print_single
+print_word_zero_seen:
+    r4 := r4 / 10
+    goto print_word_zero_seen_loop
+
+# print a single digit
+print_single:
+    output r3 + '0'
+    goto print_word_zero_seen
+
+print_word_end:
+    pop r5 off stack r2
+    pop r3 off stack r2
+    pop r4 off stack r2
+    pop r1 off stack r2
+    push r5 on stack r2
+    output '\n'
+    goto r1
+
+# Print special cases
+print_zero:
+    output '0'
+    goto print_word_end
+
+print_neg:
+    output '-'
+    r1 := -r1
+    goto print_word_init
+
+print_minus_one:
+    output "-1"
+    goto print_word_end

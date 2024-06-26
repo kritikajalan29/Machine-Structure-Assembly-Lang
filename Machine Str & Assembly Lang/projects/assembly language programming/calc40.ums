@@ -1,0 +1,279 @@
+# calc40.ums
+# contains functions for the rpn calculator
+
+# set temps and zero register
+    .zero r0
+    .temps r6, r7
+
+# allocate jump table
+    .section rodata
+starttable:
+    .space 256
+
+# fill up jump table
+    .section init
+    m[r0][starttable + '0'] := push_number
+    m[r0][starttable + '1'] := push_number
+    m[r0][starttable + '2'] := push_number
+    m[r0][starttable + '3'] := push_number
+    m[r0][starttable + '4'] := push_number
+    m[r0][starttable + '5'] := push_number
+    m[r0][starttable + '6'] := push_number
+    m[r0][starttable + '7'] := push_number
+    m[r0][starttable + '8'] := push_number
+    m[r0][starttable + '9'] := push_number
+    m[r0][starttable + '\n'] := newline
+    m[r0][starttable + ' '] := space
+    m[r0][starttable + '+'] := add
+    m[r0][starttable + '-'] := subtract
+    m[r0][starttable + '*'] := multiply
+    m[r0][starttable + '/'] := divide
+    m[r0][starttable + '|'] := or
+    m[r0][starttable + '&'] := and
+    m[r0][starttable + 'c'] := negate
+    m[r0][starttable + '~'] := not
+    m[r0][starttable + 's'] := swap
+    m[r0][starttable + 'd'] := duplicate
+    m[r0][starttable + 'p'] := pop_value
+    m[r0][starttable + 'z'] := zero
+
+.section text
+# main function that immediately enters waiting state
+main:
+    push r1 on stack r2
+
+    goto waiting
+
+main_end:
+    pop r5 off stack r2
+    r1 := r0
+    halt
+
+waiting:
+    push r1 on stack r2
+    # push
+
+    r4 := input()               // puts input into register
+
+    if (r4 + 1 == r0) goto input_end using r5
+
+    r5 := 0
+
+    push r5 on stack r2         // pushes 0 as argument, causing a jump to push_number_waiting
+    goto access_jump linking r1
+    pop stack r2                // remove our func argument from the stack
+
+    pop stack r2                // remove input from stack
+
+    pop r1 off stack r2
+    goto entering
+
+entering:
+    push r1 on stack r2
+    r4 := input()               // takes next input and populates register4
+
+    if (r4 + 1 == r0) goto input_end using r5
+
+    r5 := 1
+
+    push r5 on stack r2
+    goto access_jump linking r1
+    pop stack r2
+
+    pop r1 off stack r2
+    goto entering
+
+input_end:
+    pop r1 off stack r2
+    goto r1
+
+
+# todo: get the stack working properly for halt
+entering_to_waiting:
+    pop stack r2
+    pop stack r2
+    goto waiting
+
+access_jump:
+    pop r5 off stack r2         // argument for push_number
+    push r1 on stack r2         // push ret addr to r1
+    push r5 on stack r2         // push argument for push_number on stack
+
+    r5 := starttable + r4
+    r5 := m[r0][r5]
+    goto r5 linking r1
+
+    pop stack r2
+    pop r1 off stack r2
+    goto r1
+
+push_number:
+    pop r5 off stack r2         // argument for push_number
+    push r1 on stack r2         // push ret addr to stack
+
+    r1 := r5
+    if (r1 == 0) goto push_number_waiting using r5  // chec
+    if (r1 == 1) goto push_number_entering using r5
+
+push_number_end:
+    pop r1 off stack r2
+    push r5 on stack r2
+    goto r1
+
+push_number_waiting:
+    r4 := r4 - '0'
+    push r4 on stack r3
+    goto push_number_end
+
+push_number_entering:
+    push r1 on stack r2
+    pop r1 off stack r3
+    r1 := r1 * 10
+    r4 := r4 - '0'
+    r1 := r1 + r4
+    push r1 on stack r3
+    pop r1 off stack r2
+    goto push_number_end
+
+# commands below here
+command:
+    goto waiting
+
+newline:
+    goto print linking r1
+
+    #r5 := r3 + 1
+    #r5 := m[r0][r5]
+    #output r5 + '0'
+    goto entering_to_waiting
+
+space:
+    goto entering_to_waiting
+
+add:
+    if (r3 + 1 == endvstack) goto stack_underflow using r4, r5
+    pop r1 off stack r3
+    pop r5 off stack r3
+
+    r1 := r5 + r1
+
+    push r1 on stack r3
+    pop r1 off stack r2
+
+    goto entering_to_waiting
+
+subtract:
+    if (r3 + 1 == endvstack) goto stack_underflow using r4, r5
+    pop r1 off stack r3
+    pop r5 off stack r3
+
+    r1 := r5 - r1
+
+    push r1 on stack r3
+
+    goto entering_to_waiting
+
+multiply:
+    if (r3 + 1 == endvstack) goto stack_underflow using r4, r5
+    pop r1 off stack r3
+    pop r5 off stack r3
+
+    r1 := r5 * r1
+
+    push r1 on stack r3
+
+    goto entering_to_waiting
+
+divide:
+    if (r3 + 1 == endvstack) goto stack_underflow using r4, r5
+    pop r1 off stack r3
+    pop r5 off stack r3
+
+    r1 := r5 / r1
+
+    push r1 on stack r3
+
+    goto entering_to_waiting
+
+or:
+    if (r3 + 1 == endvstack) goto stack_underflow using r4, r5
+    pop r1 off stack r3
+    pop r5 off stack r3
+
+    r1 := r1 nand r1
+    r5 := r5 nand r5
+    r1 := r5 nand r1
+
+    push r1 on stack r3
+
+    goto entering_to_waiting
+
+and:
+    if (r3 + 1 == endvstack) goto stack_underflow using r4, r5
+    pop r1 off stack r3
+    pop r5 off stack r3
+
+    r1 := r1 nand r5
+    r1 := r1 nand r1
+
+    push r1 on stack r3
+
+    goto entering_to_waiting
+
+negate:
+    if (r3 == endvstack) goto stack_underflow_1 using r4, r5
+    pop r1 off stack r3
+
+    r1 := -r1
+
+    push r1 on stack r3
+
+    goto entering_to_waiting
+
+not:
+    if (r3 == endvstack) goto stack_underflow_1 using r4, r5
+    pop r1 off stack r3
+
+    r1 := r1 nand r1
+
+    push r1 on stack r3
+
+    goto entering_to_waiting
+
+swap:
+    if (r3 + 1 == endvstack) goto stack_underflow using r4, r5
+    pop r1 off stack r3
+    pop r5 off stack r3
+
+    push r1 on stack r3
+    push r5 on stack r3
+
+    goto entering_to_waiting
+
+duplicate:
+    if (r3 == endvstack) goto stack_underflow_1 using r4, r5
+    pop r1 off stack r3
+
+    push r1 on stack r3
+    push r1 on stack r3
+
+    goto entering_to_waiting
+
+pop_value:
+    if (r3 == endvstack) goto stack_underflow_1 using r4, r5
+    pop r1 off stack r3
+
+    goto entering_to_waiting
+
+zero:
+    r3 := endvstack
+    goto entering_to_waiting
+
+# Stack underflow error
+stack_underflow:
+    output "Stack underflow---expected at least 2 elements\n"
+    goto entering_to_waiting
+
+stack_underflow_1:
+    output "Stack underflow---expected at least 1 element\n"
+    goto entering_to_waiting
