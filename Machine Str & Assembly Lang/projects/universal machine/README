@@ -1,0 +1,185 @@
+/**********************************************************
+* Homework 6: UM
+* Author: Kritika Jalan (kjalan01) and Ishaan Arora (iarora01)
+* CS 40
+* README
+* Date: 11/22/2022
+*********************************************************/
+
+
+Acknowledgements
+        * We were helped by course staff which included, TAs ,
+          Alec, Matt, Trevor, Tina, Cece and Adam. Thank you!
+        * Once we had our design ready, we went over it with the TAs to make 
+          sure we are on the right track.
+        * We used Hansons Seq_T interface in our implementation to represent
+          main memory.
+        * We used the linux man pages to understand the stat interface
+          to access file information
+
+
+
+/********************************************************************\
+*                          Implementation                            *
+\********************************************************************/
+
+To the best of our knowledge, our program accurately implements a 
+software-based virtual machine (the Universal Machine). The program sucessfully
+emulates memory registers, a segmented memory structure, an I/O device that
+performs input and output instructions of unsigned 8-bit characters, and a 
+32-bit program counter.
+
+Departure from design:
+- We used 3 Hanson sequences instead of 1 to keep track of the memory segments,
+the ids of the segments and also the size of each instruction array in one
+index of the segment
+
+- We restructured our modules a little to optimize program flow
+
+/********************************************************************\
+*                          Architecture                              *
+\********************************************************************/
+
+MODULES:
+
+
+1. Driver module - main driver code. Takes in input file, opens it, reads from
+                  it, and runs the main execution loop
+2. Memseg module - Deals with the segmented memory model
+3. Operations module - conducts all the 14 operations the UM deals with
+4. Unpack module - Unpacks the bitpacked instructions
+
+
+
+Driver Module:
+    
+    um.h
+        - Interface for um.c
+        - Defines required functions
+    
+    um.c
+        - Handles file opening and closing
+        - Reads from program and calls appropriate functions to execute 
+          instructions and initialise system
+        - Contains the main execution loop that executes loaded instructions
+
+Memseg Module:
+    
+    memseg.h
+        - Defines all the functions that deal with memory management
+        - Defines helper functions for instructions map segment, unmap 
+          segment, halt, and load program
+    
+    memseg.c
+        - Implements all functions that deal with memory management
+        - These include functions to initalise the memory, creating new 
+          segments, and helper functions for aforementioned instructions
+        - Uses a Hanson Sequence populated with C Arrays to represent memory
+        - Also consists of Hanson Sequences tracking mapped IDs, unmapped IDs,
+          and sizes of C Arrays. These are hidden from clients
+
+
+Operations Module:
+    
+    operations.h
+        - Handles file opening and closing
+        - Takes in arguments passed in from the user and calls the respective
+        function (compress_or_decompress)
+    
+    operations.c
+        - Has a switch case to handle the 14 UM operations 
+        - Calls necessary functions and helper functions to execute the um
+          instructions. 
+        - Memory operations call the memory segment module for manipulation 
+          of memory
+        - Functions executing operations are hidden from the user (defined as
+          static inline functions)
+
+Unpack Module:
+    
+    unpack.h
+        - interface for unpack.c
+        - Defines functions required by unpack.c
+    
+    unpack.c
+        - Unpacks the 32-bit instruction into opcode, registers and value 
+          (in the case of Load Value)
+        - Uses the bitpack implememtation to do so.
+
+
+DATA STRUCTURES:
+
+Seq_T segments
+- Sequence of C-Arrays that represents main memory
+
+Seq_T mapped_id
+- Sequence of ids corresponding to segments that have been mapped
+
+Seq_T unmapped_id
+- Sequence of ids corresponding to segments that have been unmapped
+
+Seq_T sizes
+- Sequence of sizes corresponding to C-Arrays within segments
+
+Departure from design: Instead of having just 1 Hanson sequence, we now have
+                       3 to keep track of C Array sizes, mapped ids, and
+                       unmapped ids.
+
+/********************************************************************\
+*                        Part D: Time Spent                           *
+\********************************************************************/
+
+Analysis - approximately 10 hours
+Designing - approximately 20 hours
+Coding - approximately 45 hours
+
+/********************************************************************\
+*                        Part E: Testing                              *
+\********************************************************************/
+
+We do not output much in these tests because we output the registers in our
+actual code to see if they are updated appropriately.
+
+- halt.um - Calls the halt() instruction to see if program stops appropriately
+- halt-verbose.um - loads several values and outputs them, and then halts to
+                    ensure program stops appropriately
+- lv-test.um: Loads values into registers and overwrites those values to ensure
+           the execute_lv function works as expected
+- cmov-test.um: Tests the conditional move operation when r[c] is non-zero and 
+                zero. When r[c] != 0, it copies the value of r[b] into r[a]
+- add.um: Tests add, adds the values in registers r[b] and r[c] and stores the
+            sum in r[a]
+- print-six.um: Adds values in registers r[1] and r[2], places the results in
+                r[3] and outputs it which prints the character '6'
+- multiply-test.um: Tests multiply, multiplies the values in registers r[b] and 
+                  r[c] and stores the product in r[a]
+- div-test.um: Tests divide, divides the values in registers r[b] and 
+                  r[c] and stores the quotient in r[a]
+- nand-test.um: Tests nand, conducts bitwise nand on values in registers r[b] 
+                and r[c], and stores the result in r[a]
+- output-test.um: Tests output, outputs the values in registers r[c] to the I/O 
+               device
+- input-test.um: Tests input, takes in input from stdin or testfile and 
+                 populates r[c] with the input value
+- segload-test.um: Tests the segmented load operation. Loads value in r[b] and 
+                r[c]. Finds word r[c] in segment r[b] and puts it into r[a]
+- segstore-test.um: Tests the segmented store operation. Loads value for 
+                    number of words in r[c]. Segment id is stored in r[b]
+- mapseg-test.um: Tests the map segment operation. Loads value in r[b] and 
+                r[c]. Finds word r[c] in segment r[b] and puts it into r[a]
+- unmapseg-test.um: Tests the unmap segment operation after mapping once. 
+- unmapseg-new-test.um: Tests the unmap segment operation after mapping 
+                        several times
+- loadp-test.um - Tests the load program instruction in conjunction with
+                  map segment, segmented load, and segmented store instructions
+
+/********************************************************************\
+*                        Part F: CPU timing                           *
+\********************************************************************/
+
+How long does it take our UM to execute 50 million instructions?
+- 7.8 seconds
+How do we know?
+- We wrote a unit test that has 49,999,999 instructions and 1 halt instruction.
+Using the /usr/bin/time command, we could compute the time our UM would
+take to execute 50 million instructions.
