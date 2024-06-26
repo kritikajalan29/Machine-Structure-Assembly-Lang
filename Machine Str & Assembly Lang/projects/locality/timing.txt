@@ -1,0 +1,45 @@
+ROTATE 0
+ROW MAJOR
+Total time for a 0 rotation: 305155.000000
+Time per pixel for a 0 rotation: 16.785204
+COL MAJOR
+Total time for a 0 rotation: 299088.000000
+Time per pixel for a 0 rotation: 16.451485
+BLOCK MAJOR
+Total time for a 0 rotation: 608946.000000
+Time per pixel for a 0 rotation: 33.495380
+
+
+
+ROTATE 90
+ROW MAJOR
+Total time for a 90 rotation: 684952.000000
+Time per pixel for a 90 rotation: 37.676128
+COL MAJOR
+Total time for a 90 rotation: 801606.000000
+Time per pixel for a 90 rotation: 44.092739
+BLOCK MAJOR
+Total time for a 90 rotation: 1281515.000000
+Time per pixel for a 90 rotation: 70.490374
+
+ROTATE 180
+ROW MAJOR
+Total time for a 180 rotation: 777361.000000
+Time per pixel for a 180 rotation: 42.759131
+COL MAJOR
+Total time for a 180 rotation: 928051.000000
+Time per pixel for a 180 rotation: 51.047910
+BLOCK MAJOR
+Total time for a 180 rotation: 1362635.000000
+Time per pixel for a 180 rotation: 74.952420
+
+ROTATE 270
+ROW MAJOR
+Total time for a 270 rotation: 802007.000000
+Time per pixel for a 270 rotation: 44.114796
+COL MAJOR
+Total time for a 270 rotation: 806819.000000
+Time per pixel for a 270 rotation: 44.379483
+BLOCK MAJOR
+Total time for a 270 rotation: 1346351.000000
+Time per pixel for a 270 rotation: 74.056711

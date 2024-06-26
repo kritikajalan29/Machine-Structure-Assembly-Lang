@@ -1,0 +1,44 @@
+ROTATE 0
+Total time for a 0 rotation: 291824.000000
+Time per pixel for a 0 rotation: 16.051925
+Total time for a 0 rotation: 303938.000000
+Time per pixel for a 0 rotation: 16.718262
+Total time for a 0 rotation: 601958.000000
+Time per pixel for a 0 rotation: s
+
+
+ROTATE 90
+
+Total time for a 90 rotation: 682182.000000
+Time per pixel for a 90 rotation: 37.523762
+Total time for a 90 rotation: 829164.000000
+Time per pixel for a 90 rotation: 45.608581
+Total time for a 90 rotation: 1283246.000000
+Time per pixel for a 90 rotation: 70.585589
+
+ROTATE 180
+
+Total time for a 180 rotation: 781506.000000
+Time per pixel for a 180 rotation: 42.987129
+Total time for a 180 rotation: 940958.000000
+Time per pixel for a 180 rotation: 51.757866
+Total time for a 180 rotation: 1376062.000000
+Time per pixel for a 180 rotation: 75.690979
+
+ROTATE 270
+Total time for a 270 rotation: 684137.000000
+Time per pixel for a 270 rotation: 37.631298
+Total time for a 270 rotation: 809450.000000
+Time per pixel for a 270 rotation: 44.524202
+Total time for a 270 rotation: 1291991.000000
+Time per pixel for a 270 rotation: 71.066612
+Total time for a 0 rotation: 294174.000000
+Time per pixel for a 0 rotation: 16.181188
+Total time for a 90 rotation: 801920.000000
+Time per pixel for a 90 rotation: 44.110011
+Total time for a 180 rotation: 1366815.000000
+Time per pixel for a 180 rotation: 75.182343
+Total time for a 270 rotation: 683591.000000
+Time per pixel for a 270 rotation: 37.601265
+Total time for a 0 rotation: 24013588.000000
+Time per pixel for a 0 rotation: 1320.879428

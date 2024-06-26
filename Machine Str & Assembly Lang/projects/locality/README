@@ -1,0 +1,220 @@
+/**********************************************************
+* Homework 3: locality
+* Author: Arya Prasad and Kritika Jalan
+* CS 40
+* README
+* Date: 10/13/2022
+*********************************************************/
+
+
+Acknowledgements
+        * Files we modified: UArray2b.c, ppmtrans, a2plain.c
+        * We were helped by course staff which included, Matt and Tina.
+          Thank you!
+        * Once we had our design ready, we went over it with the TAs to make 
+          sure we are on the right track.
+        * We used Hanson's UArray_T interface in our implementation to store 
+          pixels
+        * We used the implementation of UArray2_T given on the course website
+        * We used the linux man pages to understand the ppm syntax 
+
+
+
+/********************************************************************\
+*                          Implementation                            *
+\********************************************************************/
+
+To the best of our knowledge, our program accurately reads in an image of type 
+ppm and transforms it according to user input. It also accesses the pixels
+in the method specified by the user. Our implementation works with both stdin
+and file input.
+
+/********************************************************************\
+*                          Architecture                              *
+\********************************************************************/
+
+ppmtrans
+- Reads in an image of type ppm and store the pixels in a 2D array
+- Uses A2Methods to perform transformations on images based on user input
+- A2Methods is an interface which acts as a super class for sub classes
+  a2plain and a2blocked
+- If the user specifies how they want to access and store the pixels, 
+   they can choose between row, col, and block major
+        - row-major is the default method
+- We use toTransform struct to send image info to functions that transform each
+        pixel and writes to a new instance of an image
+- Image rotations use mapping functions based on the method defined
+        - A2Methods facilitates the mapping specific to the defined method 
+- The final image is printed to stdout
+- The client can also make use of '-time' in order to view how long each
+   transformation takes
+
+A2Methods
+- a2plain creates an unblocked array for row and col major.
+        - All operations are carried out using the functions defined under
+          the a2plain class
+        - ppmtrans calls A2Methods and uses a2plain functions for 
+          unblocked arrays
+- a2blocked creates a blocked array for block major
+        - All operations are carried out using the functions defined under
+          the a2blocked 
+        - a2blocked.c uses UArray_T to create and use D to store pixels
+        - ppmtrans calls A2Methods and uses a2blocked functions for 
+          blocked arrays
+
+UArray2b
+- A 2D array that stores information in blocked form 
+  - Each block is represented as a 1D array of lengthR blocksize*blocksize
+  - blocksize is the number of bytes stored in one line 
+- The mapping function also traverses in blocked form
+- a2blocked uses UArray2b to create a blocked array and use functions 
+   specifically defined for it
+
+
+/********************************************************************\
+*                        Part E: CPUTiming                            *
+\********************************************************************/
+
+Below we outline the timing test for 2 images - one smaller(flowers.ppm)
+and one larger (mobo.ppm). For each image, we use the timing test for 
+all the 4 rotations (0, 90, 180 and 270 degrees). Inside each rotation, 
+we cover all the 3 access methods (row, column and block major). 
+
+After our testing documention, we mention the trends we observe from
+the below tables and the possible reasons for them.
+
+TEST SMALL FILE
+Image used: flowers.ppm
+
+********
+ROTATE 0
+********
+
+| MAJOR ACCESS | TOTAL TIMING    | TIMING PER PIXEL   |
+| :----------: | :-------------: | :----------------: |
+| Row Major    | 305155.000000   | 16.785204          |
+| Column Major | 299088.000000   | 16.451485          |
+| Block major  | 608946.000000   | 33.495380          |
+
+*********
+ROTATE 90
+*********
+
+| MAJOR ACCESS | TOTAL TIMING    | TIMING PER PIXEL   |
+| :----------: | :-------------: | :----------------: |
+| Row Major    |  684952.000000  |  37.676128         |
+| Column Major |  801606.000000  |  44.092739         |
+| Block major  |  1281515.000000 |  70.490374         |
+
+**********
+ROTATE 180
+**********
+
+| MAJOR ACCESS | TOTAL TIMING    | TIMING PER PIXEL   |
+| :----------: | :-------------: | :----------------: |
+| Row Major    |  777361.000000  |  42.759131         |
+| Column Major |  928051.000000  |  51.047910         |
+| Block major  |  1362635.000000 |  74.952420         |
+
+**********
+ROTATE 270
+**********
+
+| MAJOR ACCESS | TOTAL TIMING    | TIMING PER PIXEL   |
+| :----------: | :-------------: | :----------------: |
+| Row Major    | 802007.000000   | 44.114796          |
+| Column Major | 806819.000000   | 44.379483          |
+| Block major  | 1346351.000000  | 74.056711          |
+
+
+TEST BIG FILE
+Image used: mobo.ppm
+
+********
+ROTATE 0
+********
+
+| MAJOR ACCESS | TOTAL TIMING    | TIMING PER PIXEL   |
+| :----------: | :-------------: | :----------------: |
+| Row Major    | 291824.000000   | 16.051925          |
+| Column Major | 303938.000000   | 16.718262          |
+| Block major  | 601958.000000   | 33.111001          |
+
+*********
+ROTATE 90
+*********
+
+| MAJOR ACCESS | TOTAL TIMING    | TIMING PER PIXEL   |
+| :----------: | :-------------: | :----------------: |
+| Row Major    |  682182.000000  |  37.523762         |
+| Column Major |  829164.000000  |  45.608581         |
+| Block major  |  1283246.000000 |  70.585589         |
+
+*********
+ROTATE 180
+*********
+
+| MAJOR ACCESS | TOTAL TIMING    | TIMING PER PIXEL   |
+| :----------: | :-------------: | :----------------: |
+| Row Major    |  781506.000000  |  42.987129         |
+| Column Major |  940958.000000  |  51.757866         |
+| Block major  |  1376062.000000 |  75.690979         |
+
+*********
+ROTATE 270
+*********
+
+| MAJOR ACCESS | TOTAL TIMING    | TIMING PER PIXEL   |
+| :----------: | :-------------: | :----------------: |
+| Row Major    |  684137.000000  |  37.631298         |
+| Column Major |  809450.000000  |  44.524202         |
+| Block major  |  1291991.000000 |  71.066612         |
+
+
+OBSERVATIONS:
+
+
+
+ROW-MAJOR 
+- The total timing as well as the timing per pixel for row-major 
+  access increases for 180 degree rotation compared to 90 and
+  270 degree rotations
+    - This maybe because the dimensions change such that there are 
+      more cache misses than hits 
+
+COL-MAJOR
+- The total timing as well as the timing per pixel for col-major 
+  access as well increases for 180 degree rotation compared to 90 and
+  270 degree rotations
+    - This maybe because the dimensions change such that there are 
+      more cache misses than hits 
+
+BLOCK-MAJOR
+- The total timing and the timing per pixel for rotation of 90, 180 
+  and 270 degree remained almost the same across (total time approx 
+  13000000.00 and timing per pixel approx 72.00 nanoseconds)
+-  However it takes significantly longer than row-major and col-major
+      - This could be because there is a lot of overhead for a 
+      block major access
+      - In image transformation, to copy each pixel, we first access the
+      block in the 2D UArray and then each cell in the 1D Array 
+  
+COMPARISON BETWEEN TWO IMAGES (SMALL AND LARGE): 
+- We did our time test with a medium sized image(flowers.ppm) and 
+  a large sized image(mobo.ppm) to check whether the timings 
+  differed and if they did by how much. 
+      - We can see from above that there is not much difference 
+      between the timings of the two images 
+      - One reason that this could happen would be that only a part
+      of both the images fit on the cache. Since cache eviction is
+      line by line, that may have resulted in getting similar timings 
+      for both the images despite their varying sizes. 
+
+
+
+/********************************************************************\
+*                        Part D: Time Spent                           *
+\********************************************************************/
+
+We spent approximately 50 hours on this homework. 
+
